@@ -1,0 +1,34 @@
+# Site do Artillery.io:
+# https://artillery.io/
+#
+# Para mais informações sobre o Artillery.io acesse este artigo
+# https://renatogroffe.medium.com/artillery-io-testes-de-carga-e-gera%C3%A7%C3%A3o-de-relat%C3%B3rios-html-b122def91df2
+
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  urlTestes: URL PARA TESTES
+
+schedules:
+- cron: "*/2 * * * *"
+  branches:
+    include:
+      - main
+  displayName: Execução a cada 2 min
+  # always = true indica execução mesmo sem mudanças
+  always: true
+
+steps:
+- script: ls
+  displayName: 'Exibir arquivos no repositório'
+
+- script: npm install artillery
+  displayName: 'Instalar Artillery.io'
+
+- script: npx artillery -V
+  displayName: 'Exibir versão do Artillery.io'
+
+- script: npx artillery quick --count 20 -n 50 -k $(urlTestes)
+  displayName: 'Testes com Artillery.io (20 usuários simultâneos, 50 requisições cada)'
